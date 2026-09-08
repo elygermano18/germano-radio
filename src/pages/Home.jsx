@@ -1,3 +1,5 @@
+// src/pages/Home.jsx
+
 import { useState, useEffect } from 'react';
 import RadioCard from '../components/RadioCard';
 import { radioApi } from '../services/radioApi';
@@ -10,6 +12,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [citySearch, setCitySearch] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+  
   const { 
     activeFilter, 
     filterValue, 
@@ -63,8 +66,10 @@ export default function Home() {
           }
           break;
 
+        // AQUI ESTÁ A CORREÇÃO: Junta as rádios do código com as do formulário
         case 'local':
-          data = userRadios;
+          const radiosDoCodigo = radioApi.getLocalRadios();
+          data = [...radiosDoCodigo, ...userRadios];
           break;
           
         default:
@@ -167,6 +172,7 @@ export default function Home() {
         <p>{subtitle}</p>
       </div>
 
+      {/* Botão de adicionar rádio (só aparece na aba "Adicionadas") */}
       {activeFilter === 'local' && (
         <button className="btn-add-radio" onClick={() => setShowAddModal(true)}>
           <Plus size={20} />
@@ -174,6 +180,7 @@ export default function Home() {
         </button>
       )}
 
+      {/* Busca por cidade quando estiver filtrando por estado */}
       {activeFilter === 'state' && (
         <form className="city-search-bar" onSubmit={handleCitySearch}>
           <div className="search-input-wrapper">
@@ -187,7 +194,7 @@ export default function Home() {
             />
             {cityFilter && (
               <button type="button" onClick={clearCityFilter} className="clear-btn">
-                
+                ✕
               </button>
             )}
           </div>
@@ -232,6 +239,7 @@ export default function Home() {
         </div>
       )}
 
+      {/* Modal de adicionar rádio */}
       {showAddModal && (
         <AddRadioModal 
           onClose={() => setShowAddModal(false)} 
